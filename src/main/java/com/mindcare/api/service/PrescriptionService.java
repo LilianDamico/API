@@ -4,6 +4,10 @@ import com.mindcare.api.dto.PrescriptionDTO;
 import com.mindcare.api.dto.MedicamentoInfoDTO;
 import com.mindcare.api.model.*;
 import com.mindcare.api.repository.*;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,4 +55,13 @@ public class PrescriptionService {
 
         return prescriptionRepository.save(p);
     }
+
+    public List<Prescription> listarPorProfissional(Long profissionalId) {
+        return prescriptionRepository.findByProfessionalId(profissionalId);
+    }
+    
+    public Optional<Prescription> buscarPorId(Long id) {
+        return prescriptionRepository.findById(id);
+    }
+    
 }
