@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: mindcare-backend
+    env: java
+    plan: free
+    buildCommand: ./mvnw clean install
+    startCommand: java -jar target/*.jar
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://dpg-csmvsb8gph6c73fqn11g-a.oregon-postgres.render.com:5432/serverone
+      - key: SPRING_DATASOURCE_USERNAME
+        value: serverone_user
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: VWnEZLO3KB1WSdUG81UgGK2M4WxAlV23
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      - key: SERVER_PORT
+        value: 8080
