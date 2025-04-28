@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -40,5 +41,12 @@ public class PatientController {
         Optional<Patient> paciente = patientRepository.findByEmail(user.getEmail());
         return paciente.map(ResponseEntity::ok)
                        .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PreAuthorize("hasAuthority('PROFISSIONAL')")
+    @GetMapping
+    public ResponseEntity<List<Patient>> listarTodos() {
+        List<Patient> pacientes = patientService.listarTodos();
+        return ResponseEntity.ok(pacientes);
     }
 }

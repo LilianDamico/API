@@ -8,6 +8,7 @@ import com.mindcare.api.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,18 +21,24 @@ public class PatientService {
     private ClinicRepository clinicRepository;
 
     public Patient criar(PatientDTO dto) {
-        Patient patient = new Patient();
-        patient.setNome(dto.nome);
-        patient.setCpf(dto.cpf);
-        patient.setDataNascimento(dto.dataNascimento);
-        patient.setGenero(dto.genero);
-        patient.setContatoEmergencia(dto.contatoEmergencia);
-        patient.setTelefone(dto.telefone);
-        patient.setEmail(dto.email);
+        Patient paciente = new Patient();
+        paciente.setNome(dto.nome);
+        paciente.setCpf(dto.cpf);
+        paciente.setDataNascimento(dto.dataNascimento);
+        paciente.setGenero(dto.genero);
+        paciente.setContatoEmergencia(dto.contatoEmergencia);
+        paciente.setTelefone(dto.telefone);
+        paciente.setEmail(dto.email);
 
-        Optional<Clinic> clinic = clinicRepository.findById(dto.clinicId);
-        clinic.ifPresent(patient::setClinic);
+        if (dto.clinicId != null) {
+            Optional<Clinic> clinicOpt = clinicRepository.findById(dto.clinicId);
+            clinicOpt.ifPresent(paciente::setClinic);
+        }
 
-        return patientRepository.save(patient);
+        return patientRepository.save(paciente);
+    }
+
+    public List<Patient> listarTodos() {
+        return patientRepository.findAll();
     }
 }
