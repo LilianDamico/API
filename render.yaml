@@ -16,3 +16,5 @@ services:
         value: update
       - key: SERVER_PORT
         value: 8080
+      - key: FRONTEND_URL
+        value: https://mind-care-3tex.onrender.com
