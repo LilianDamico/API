@@ -1,10 +1,20 @@
 package com.mindcare.api.dto;
 
 public class AuthResponse {
-    public String token;
+    private String token;
+    private UserDTO user;
 
-    public AuthResponse(String token) {
+    public AuthResponse(String token, UserDTO user) {
         this.token = token;
+        this.user = user;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public UserDTO getUser() {
+        return user;
     }
 }
 

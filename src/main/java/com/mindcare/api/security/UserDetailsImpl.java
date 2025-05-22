@@ -5,7 +5,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
 
 public class UserDetailsImpl implements UserDetails {
 
@@ -19,9 +18,25 @@ public class UserDetailsImpl implements UserDetails {
         return this.user;
     }
 
+    public Long getId() {
+        return user.getId();
+    }
+
+    public String getNome() {
+        return user.getNome();
+    }
+
+    public String getEmail() {
+        return user.getEmail();
+    }
+
+    public String getTipo() {
+        return user.getTipo();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // Você pode retornar roles aqui futuramente
+        return null; // ou coleções específicas se tiver papéis
     }
 
     @Override
@@ -35,14 +50,22 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() { return true; }
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
     @Override
-    public boolean isAccountNonLocked() { return true; }
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
     @Override
-    public boolean isCredentialsNonExpired() { return true; }
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
     @Override
-    public boolean isEnabled() { return true; }
+    public boolean isEnabled() {
+        return true;
+    }
 }
