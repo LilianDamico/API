@@ -8,45 +8,86 @@ import java.util.Collection;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private final User user;
+    private Long id;
+    private String nome;
+    private String email;
+    private String senha;
+    private String tipo;
+    private Long clinicId;
 
-    public UserDetailsImpl(User user) {
-        this.user = user;
+    private Collection<? extends GrantedAuthority> authorities;
+
+    // ✅ Construtor usado para carregar o usuário autenticado
+    public UserDetailsImpl(Long id, String nome, String email, String senha, String tipo, Long clinicId,
+                           Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.senha = senha;
+        this.tipo = tipo;
+        this.clinicId = clinicId;
+        this.authorities = authorities;
     }
 
-    public User getUser() {
-        return this.user;
+    // ✅ Construtor usado no login com um objeto User
+    public static UserDetailsImpl build(User user) {
+        return new UserDetailsImpl(
+            user.getId(),
+            user.getNome(),
+            user.getEmail(),
+            user.getSenha(),
+            user.getTipo(),
+            user.getClinic() != null ? user.getClinic().getId() : null,
+            null // Se você tiver perfis/roles, substitua por uma lista de authorities
+        );
     }
 
+    // ✅ Getter necessário para AuthController e outros usos
     public Long getId() {
-        return user.getId();
+        return id;
     }
 
     public String getNome() {
-        return user.getNome();
+        return nome;
     }
 
     public String getEmail() {
-        return user.getEmail();
+        return email;
     }
 
     public String getTipo() {
-        return user.getTipo();
+        return tipo;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null; // ou coleções específicas se tiver papéis
+    public Long getClinicId() {
+        return clinicId;
     }
 
-    @Override
-    public String getPassword() {
-        return user.getSenha();
+    public User getUser() {
+        // Apenas para compatibilidade com `getUser()` chamado em alguns serviços
+        // Retorna um objeto User com os dados carregados
+        User user = new User();
+        user.setId(id);
+        user.setNome(nome);
+        user.setEmail(email);
+        user.setSenha(senha);
+        user.setTipo(tipo);
+        return user;
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return email;
+    }
+
+    @Override
+    public String getPassword() {
+        return senha;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
     }
 
     @Override

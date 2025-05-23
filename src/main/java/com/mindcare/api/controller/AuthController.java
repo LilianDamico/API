@@ -7,7 +7,8 @@ import com.mindcare.api.security.JwtUtil;
 import com.mindcare.api.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -17,34 +18,30 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @PostMapping
-public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-    Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.email, request.senha)
-    );
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha())
+        );
 
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-    String token = jwtUtil.generateToken(userDetails.getUsername());
+        String token = jwtUtil.generateToken(userDetails.getUsername());
 
-    // Aqui você cria um DTO com os dados do usuário logado
-    UserDTO userDTO = new UserDTO(
-    userDetails.getNome(),
-    userDetails.getEmail(),
-    "protegida", // ou null, já que a senha não deve ser exposta
-    userDetails.getTipo(),
-    null // ou userDetails.getClinicId() se houver esse campo
-);
+        UserDTO userDTO = new UserDTO(
+                userDetails.getNome(),
+                userDetails.getEmail(),
+                null,
+                userDetails.getTipo(),
+                userDetails.getClinicId()
+        );
 
-
-
-    return ResponseEntity.ok(new AuthResponse(token, userDTO));
-}
-
+        return ResponseEntity.ok(new AuthResponse(token, userDTO));
+    }
 }
