@@ -1,5 +1,6 @@
 package com.mindcare.api.service;
 
+import com.mindcare.api.dto.UserDTO;
 import com.mindcare.api.model.User;
 import com.mindcare.api.repository.ClinicRepository;
 import com.mindcare.api.repository.UserRepository;
@@ -29,7 +30,7 @@ public class UserService {
     private JwtUtil jwtUtil;
 
     @Transactional
-    public User criarUsuario(com.mindcare.api.dto.UserDTO dto) {
+    public User criarUsuario(UserDTO dto) {
         User user = new User();
         user.setNome(dto.getNome());
         user.setEmail(dto.getEmail());
@@ -41,6 +42,16 @@ public class UserService {
         }
 
         return userRepository.save(user);
+    }
+
+    public List<User> listarProfissionais() {
+        return userRepository.findByTipo("PROFISSIONAL");
+    }
+
+    public User buscarUsuarioPorToken(String token) {
+        String email = jwtUtil.extractUsername(token.replace("Bearer ", ""));
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
     public Long getIdUserLogado() {
@@ -55,17 +66,6 @@ public class UserService {
 
         return userRepository.findByEmail(email)
                 .map(User::getId)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-    }
-
-    public List<User> listarProfissionais() {
-        return userRepository.findByTipo("PROFISSIONAL");
-    }
-
-    // 🔹 Método que extrai o e-mail do token e retorna o usuário
-    public User buscarUsuarioPorToken(String token) {
-        String email = jwtUtil.extractUsername(token.replace("Bearer ", ""));
-        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 }

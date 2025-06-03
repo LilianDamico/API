@@ -24,7 +24,8 @@ public class UserController {
 
     @GetMapping("/profissionais")
     public ResponseEntity<List<User>> listarProfissionais() {
-        return ResponseEntity.ok(userService.listarProfissionais());
+        List<User> profissionais = userService.listarProfissionais();
+        return ResponseEntity.ok(profissionais);
     }
 
     @GetMapping("/me")
