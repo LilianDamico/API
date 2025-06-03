@@ -1,7 +1,5 @@
 package com.mindcare.api.service;
 
-import com.mindcare.api.dto.UserDTO;
-import com.mindcare.api.model.Clinic;
 import com.mindcare.api.model.User;
 import com.mindcare.api.repository.ClinicRepository;
 import com.mindcare.api.repository.UserRepository;
@@ -10,10 +8,10 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -25,20 +23,21 @@ public class UserService {
     private ClinicRepository clinicRepository;
 
     @Autowired
+    private BCryptPasswordEncoder encoder;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     @Transactional
-    public User criarUsuario(UserDTO dto) {
+    public User criarUsuario(com.mindcare.api.dto.UserDTO dto) {
         User user = new User();
-
         user.setNome(dto.getNome());
         user.setEmail(dto.getEmail());
-        user.setSenha(dto.getSenha());
+        user.setSenha(encoder.encode(dto.getSenha()));
         user.setTipo(dto.getTipo());
 
         if (dto.getClinicId() != null) {
-            Optional<Clinic> clinicOpt = clinicRepository.findById(dto.getClinicId());
-            clinicOpt.ifPresent(user::setClinic);
+            clinicRepository.findById(dto.getClinicId()).ifPresent(user::setClinic);
         }
 
         return userRepository.save(user);
@@ -55,14 +54,15 @@ public class UserService {
         }
 
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"))
-                .getId();
+                .map(User::getId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
     public List<User> listarProfissionais() {
         return userRepository.findByTipo("PROFISSIONAL");
     }
 
+    // 🔹 Método que extrai o e-mail do token e retorna o usuário
     public User buscarUsuarioPorToken(String token) {
         String email = jwtUtil.extractUsername(token.replace("Bearer ", ""));
         return userRepository.findByEmail(email)

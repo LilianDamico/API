@@ -8,7 +8,6 @@ public class UserDTO {
     private String tipo;
     private Long clinicId;
 
-    // Construtores
     public UserDTO() {}
 
     public UserDTO(String nome, String email, String senha, String tipo, Long clinicId) {
@@ -19,7 +18,14 @@ public class UserDTO {
         this.clinicId = clinicId;
     }
 
-    // Getters e Setters
+    // 🔹 Novo construtor sem senha
+    public UserDTO(String nome, String email, String tipo, Long clinicId) {
+        this.nome = nome;
+        this.email = email;
+        this.tipo = tipo;
+        this.clinicId = clinicId;
+    }
+
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 

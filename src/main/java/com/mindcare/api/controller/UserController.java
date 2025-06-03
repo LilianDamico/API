@@ -11,30 +11,24 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
-@CrossOrigin(origins = "*")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    // Endpoint de cadastro
     @PostMapping
     public ResponseEntity<User> criarUsuario(@RequestBody UserDTO dto) {
         User novoUsuario = userService.criarUsuario(dto);
         return ResponseEntity.ok(novoUsuario);
     }
 
-    // Endpoint para retornar usuário logado
-    @GetMapping("/me")
-    public ResponseEntity<User> getUsuarioLogado(@RequestHeader("Authorization") String token) {
-        User usuario = userService.buscarUsuarioPorToken(token);
-        return ResponseEntity.ok(usuario);
-    }
-
-    // ✅ Endpoint para retornar lista de profissionais
     @GetMapping("/profissionais")
     public ResponseEntity<List<User>> listarProfissionais() {
-        List<User> profissionais = userService.listarProfissionais();
-        return ResponseEntity.ok(profissionais);
+        return ResponseEntity.ok(userService.listarProfissionais());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<User> getUsuarioLogado(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(userService.buscarUsuarioPorToken(token));
     }
 }

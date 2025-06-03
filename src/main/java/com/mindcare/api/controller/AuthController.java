@@ -5,6 +5,7 @@ import com.mindcare.api.dto.LoginRequest;
 import com.mindcare.api.dto.UserDTO;
 import com.mindcare.api.security.JwtUtil;
 import com.mindcare.api.security.UserDetailsImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,7 +25,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha())
         );
@@ -32,9 +33,9 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        String token = jwtUtil.generateToken(userDetails.getUsername());
+        String token = jwtUtil.generateToken(userDetails);
 
-        UserDTO userDTO = new UserDTO(
+        UserDTO dto = new UserDTO(
                 userDetails.getNome(),
                 userDetails.getEmail(),
                 null,
@@ -42,6 +43,6 @@ public class AuthController {
                 userDetails.getClinicId()
         );
 
-        return ResponseEntity.ok(new AuthResponse(token, userDTO));
+        return ResponseEntity.ok(new AuthResponse(token, dto));
     }
 }
